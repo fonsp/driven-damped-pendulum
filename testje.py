@@ -25,7 +25,7 @@ x2' = -[2 β x2 + ω0 ^2 sin(x1) - γ ω0 ^2 cos(ωt)]
 ω0pow2 = (1.5*ω)**2     # p.464
 β = 1.5*ω/4             # p.464, voetnoot 6
 γ = .42                 # variabel
-Ф0 = 0                  # p.464, voetnoot 6
+Ф0 = -np.pi/2           # p.464, voetnoot 6
 sampleFreq = 10000      # geen idee, aantal 'frames per seconde' van de simulatie
 
 def fun(Y, t):
@@ -35,19 +35,22 @@ def fun(Y, t):
 # dus in dit geval [[1.06,Ф(500)],[1.06,Ф(501)],...,[1.06,Ф(599)],[1.0605,Ф(500)],...]
 graphPoints = []
 
-
 # Spreiding van punten op de x-as, Taylor gebruikt 0.0001
-γSampleDistance = .0005
+γSampleDistance = .0001
 
 for γ in np.arange(1.06, 1.087, γSampleDistance):
     # Voor elke waarde voor gamma integreren we de ODE in het volgende tijdsgebied:
-    a_t = np.arange(0, 600.0, 1/sampleFreq)
+    # Kies t_max zdd de transient allang rip is
+    t_max = 600.0
+    a_t = np.arange(0, t_max, 1/sampleFreq)
 
     # Ik bedenk me nu dat odeint eigenlijk γ als parameter moet hebben maar python
     # heeft geen scope dus alles is oke
-    asol = integrate.odeint(fun, [Ф0, 0], a_t)
-    # De eerste kolom (x1) is dus de uitweiking, met plt.plot(a_t,y) zie je een grafiek
-    # van uitweiking vs tijd
+    # Initial conditions: [Ф(0), Ф'(0)] = [Ф0, 0] = [-np.pi/2, 0] (Taylor, p.483 voetnoet 18)
+    initial_conditions = [Ф0, 0]
+    asol = integrate.odeint(fun, initial_conditions, a_t)
+    # De eerste kolom (x1) is dus de uitwijking, met plt.plot(a_t,y) zie je een grafiek
+    # van uitwijking vs tijd
     y = asol[:,0]
     # sampler bevat de indices van t=500, t=501, ..., t=599
     sampler = [sampleFreq*x for x in range(500,600)]
@@ -60,6 +63,8 @@ for γ in np.arange(1.06, 1.087, γSampleDistance):
 
 # Plot de dataset
 graphMatrx = np.array(graphPoints)
-plt.scatter(graphMatrx[:,0], graphMatrx[:,1])
+plt.xlabel('γ')
+plt.ylabel('Ф')
+plt.scatter(graphMatrx[:,0], graphMatrx[:,1], s=1.2)
 #plt.plot(a_t, y)
 plt.show()
