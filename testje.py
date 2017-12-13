@@ -17,7 +17,6 @@ Dan krijgen we
 
 x1' = x2
 x2' = -[2 β x2 + ω0 ^2 sin(x1) - γ ω0 ^2 cos(ωt)]
-
 '''
 
 # Parameters voor de ODE:
@@ -36,7 +35,7 @@ def fun(Y, t):
 graphPoints = []
 
 # Spreiding van punten op de x-as, Taylor gebruikt 0.0001
-γSampleDistance = .0001
+γSampleDistance = .0005
 
 for γ in np.arange(1.06, 1.087, γSampleDistance):
     # Voor elke waarde voor gamma integreren we de ODE in het volgende tijdsgebied:
@@ -58,13 +57,13 @@ for γ in np.arange(1.06, 1.087, γSampleDistance):
     ySamples = asol[sampler,0]
 
     # Voeg de 100 nieuwe punten toe aan de dataset
-    newGraphPoints = [[γ, yVal % 2*np.pi] for yVal in ySamples]
+    newGraphPoints = [[γ, yVal] for yVal in ySamples]
     graphPoints = graphPoints + newGraphPoints
 
 # Plot de dataset
 graphMatrx = np.array(graphPoints)
 plt.xlabel('γ')
 plt.ylabel('Ф')
-plt.scatter(graphMatrx[:,0], graphMatrx[:,1], s=1.2)
+plt.scatter(graphMatrx[:,0], graphMatrx[:,1], s=0.9)
 #plt.plot(a_t, y)
 plt.show()
