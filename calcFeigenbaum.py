@@ -1,5 +1,3 @@
-import math
-
 dataset = [[float(x) for x in s.strip().split(',')] for s in open('bifurcationFromSharelatex.csv').readlines()]
 
 output = []
